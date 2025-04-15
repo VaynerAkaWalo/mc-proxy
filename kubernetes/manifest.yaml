@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mc-server-proxy
+  namespace: minecraft-server
+  labels:
+    app: mc-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mc-proxy
+  template:
+    metadata:
+      name: mc-proxy
+      labels:
+        app: mc-proxy
+    spec:
+      containers:
+        - name: mc-proxy
+          image: ghcr.io/vaynerakawalo/mc-proxy:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 25565
+              protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mc-proxy
+  namespace: minecraft-server
+spec:
+  selector:
+    app: mc-proxy
+  ports:
+    - protocol: TCP
+      port: 25565
+  type: ClusterIP
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mc-proxy
+  namespace: minecraft-server
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      sectionName: mc-tcp
+      kind: Gateway
+      namespace: infra
+
+  rules:
+    - backendRefs:
+        - name: mc-proxy
+          port: 25565
