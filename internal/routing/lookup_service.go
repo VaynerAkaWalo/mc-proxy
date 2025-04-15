@@ -51,5 +51,5 @@ func lookupHostname(servAddr string) string {
 }
 
 func serverRoute(serv server.Response) string {
-	return "http://" + serv.Name + ".minecraft-server.svc.cluster.local:25565"
+	return "http://" + serv.Name + ":25565"
 }
