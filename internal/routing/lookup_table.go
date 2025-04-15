@@ -1,7 +1,6 @@
 package routing
 
 import (
-	"log"
 	"sync"
 )
 
@@ -21,7 +20,6 @@ func (lt *LookupTable) AddressLookup(hostname string) (bool, string) {
 	lt.mutex.RLock()
 	defer lt.mutex.RUnlock()
 
-	log.Printf("debug addresses %s", lt.addressees)
 	serverAddress := lt.addressees[hostname]
 	if serverAddress == "" {
 		return false, ""

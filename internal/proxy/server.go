@@ -10,14 +10,14 @@ import (
 )
 
 type Server struct {
-	lookup routing.LookupTable
+	lookup *routing.LookupTable
 	addr   string
 }
 
 func NewProxyServer(addr string, lookupTable *routing.LookupTable) Server {
 	return Server{
 		addr:   addr,
-		lookup: *lookupTable,
+		lookup: lookupTable,
 	}
 }
 
