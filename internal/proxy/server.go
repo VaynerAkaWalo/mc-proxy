@@ -1,23 +1,46 @@
-package routing
+package proxy
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"mc-proxy/internal/packet"
+	"mc-proxy/internal/routing"
 	"net"
 )
 
-type Proxy struct {
-	lookup LookupTable
+type Server struct {
+	lookup routing.LookupTable
+	addr   string
 }
 
-func NewProxy(lookupTable LookupTable) Proxy {
-	return Proxy{
+func NewProxyServer(addr string, lookupTable routing.LookupTable) Server {
+	return Server{
+		addr:   addr,
 		lookup: lookupTable,
 	}
 }
 
-func (p *Proxy) Handle(conn net.Conn) {
+func (s *Server) ListenAndServe() error {
+	ln, err := net.Listen("tcp", s.addr)
+	if err != nil {
+		fmt.Println("Failed to start TCP listener")
+		return err
+	}
+
+	log.Println("Successfully started TCP listener")
+	for {
+		conn, er := ln.Accept()
+		if er != nil {
+			fmt.Println("Failed to accept client connection")
+			continue
+		}
+
+		go s.handle(conn)
+	}
+}
+
+func (s *Server) handle(conn net.Conn) {
 	defer conn.Close()
 
 	handshake, bytesToReply, err := packet.ReadHandshake(conn)
@@ -27,13 +50,13 @@ func (p *Proxy) Handle(conn net.Conn) {
 	}
 	log.Printf("Connection with hostname %s and port %d", handshake.Hostname, handshake.Port)
 
-	found, serverAddress := p.lookup.AddressLookup(handshake.Hostname)
+	found, serverAddress := s.lookup.AddressLookup(handshake.Hostname)
 	if !found {
 		log.Printf("Server for hostname %s not found in lookup table", handshake.Hostname)
 		return
 	}
 
-	serverConn, erro := p.openServerConnection(serverAddress)
+	serverConn, erro := s.openServerConnection(serverAddress)
 	if erro != nil {
 		log.Printf("Error while connecting to server %s", handshake.Hostname)
 		return
@@ -50,7 +73,7 @@ func (p *Proxy) Handle(conn net.Conn) {
 	<-ch
 }
 
-func (p *Proxy) openServerConnection(address string) (net.Conn, error) {
+func (s *Server) openServerConnection(address string) (net.Conn, error) {
 	return net.Dial("tcp", address)
 }
 

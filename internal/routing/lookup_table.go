@@ -7,8 +7,8 @@ type LookupTable struct {
 	mutex      *sync.RWMutex
 }
 
-func NewLookupTable() LookupTable {
-	return LookupTable{
+func NewLookupTable() *LookupTable {
+	return &LookupTable{
 		addressees: make(map[string]string),
 		mutex:      &sync.RWMutex{},
 	}
