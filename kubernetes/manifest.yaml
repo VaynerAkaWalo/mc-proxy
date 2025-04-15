@@ -40,8 +40,8 @@ spec:
   type: ClusterIP
 
 ---
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
 metadata:
   name: mc-proxy
   namespace: minecraft-server
