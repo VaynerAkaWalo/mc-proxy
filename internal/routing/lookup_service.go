@@ -7,11 +7,11 @@ import (
 )
 
 type LookupService struct {
-	lookupTable   LookupTable
+	lookupTable   *LookupTable
 	managerClient ManagerClient
 }
 
-func NewLookupService(table LookupTable, client ManagerClient) *LookupService {
+func NewLookupService(table *LookupTable, client ManagerClient) *LookupService {
 	return &LookupService{
 		lookupTable:   table,
 		managerClient: client,

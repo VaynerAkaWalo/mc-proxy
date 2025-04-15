@@ -1,6 +1,9 @@
 package routing
 
-import "sync"
+import (
+	"log"
+	"sync"
+)
 
 type LookupTable struct {
 	addressees map[string]string
@@ -18,6 +21,7 @@ func (lt *LookupTable) AddressLookup(hostname string) (bool, string) {
 	lt.mutex.RLock()
 	defer lt.mutex.RUnlock()
 
+	log.Printf("debug addresses %s", lt.addressees)
 	serverAddress := lt.addressees[hostname]
 	if serverAddress == "" {
 		return false, ""

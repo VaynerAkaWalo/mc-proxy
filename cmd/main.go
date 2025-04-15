@@ -15,10 +15,10 @@ func main() {
 		Addr: "https://blamedevs.com",
 	}
 
-	lookupService := routing.NewLookupService(*lookupTable, managerClient)
+	lookupService := routing.NewLookupService(lookupTable, managerClient)
 	lookupService.StartLookupService()
 
-	proxyServer := proxy.NewProxyServer(":25565", *lookupTable)
+	proxyServer := proxy.NewProxyServer(":25565", lookupTable)
 
 	err := proxyServer.ListenAndServe()
 	if err != nil {
