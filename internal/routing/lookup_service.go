@@ -1,8 +1,9 @@
 package routing
 
 import (
+	"fmt"
 	"github.com/VaynerAkaWalo/mc-server-manager/pkg/server"
-	"log"
+	"log/slog"
 	"time"
 )
 
@@ -29,11 +30,10 @@ func (ls *LookupService) StartLookupService() {
 	}()
 }
 
-func (sd *LookupService) updateLookups() {
-	log.Println("Lookup table update started")
-	servers, err := sd.managerClient.ListServers()
+func (ls *LookupService) updateLookups() {
+	servers, err := ls.managerClient.ListServers()
 	if err != nil {
-		log.Println("Failed to get servers from manager")
+		slog.Error("Failed to get server from manager")
 		return
 	}
 
@@ -41,9 +41,10 @@ func (sd *LookupService) updateLookups() {
 	for _, serv := range servers {
 		newLookupTable[lookupHostname(serv.Name)] = serverRoute(serv)
 	}
-	log.Println(newLookupTable)
 
-	sd.lookupTable.UpdateLookupTable(newLookupTable)
+	ls.lookupTable.UpdateLookupTable(newLookupTable)
+
+	slog.Info("Lookup update complete, current lookups: " + fmt.Sprint(newLookupTable))
 }
 
 func lookupHostname(servAddr string) string {
