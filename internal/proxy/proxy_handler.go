@@ -42,6 +42,8 @@ func (h *Handler) Handle(ctx context.Context, cc net.Conn) {
 		return
 	}
 
+	slog.InfoContext(ctx, "Successfully connected to server")
+
 	ch := make(chan bool)
 
 	sc.Write(bytesToReply)
@@ -51,6 +53,8 @@ func (h *Handler) Handle(ctx context.Context, cc net.Conn) {
 
 	<-ch
 	<-ch
+
+	slog.InfoContext(ctx, "Connection closed")
 }
 
 func proxyPackets(out net.Conn, in net.Conn, c chan bool) {
