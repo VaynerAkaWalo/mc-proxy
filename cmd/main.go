@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	slog.SetDefault(slog.New(xlog.NewPreConfiguredHandler(proxy.Hostname, tcp.ClientIp)))
+	slog.SetDefault(slog.New(xlog.NewPreConfiguredHandler(proxy.Hostname, tcp.ClientIp, proxy.Duration)))
 
 	slog.Info("Application mc-proxy has started")
 
