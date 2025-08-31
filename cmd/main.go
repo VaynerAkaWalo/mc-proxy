@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"github.com/VaynerAkaWalo/go-toolkit/xlog"
 	"log/slog"
 	"mc-proxy/internal/proxy"
 	"mc-proxy/internal/routing"
 	"mc-proxy/internal/tcp"
-	"net"
 )
 
 func main() {
@@ -29,9 +27,4 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		slog.Error("Error occurred while listening for client connections")
 	}
-}
-
-func noOpHandler(ctx context.Context, conn net.Conn) {
-	slog.InfoContext(ctx, "Handling client connection")
-	conn.Close()
 }
