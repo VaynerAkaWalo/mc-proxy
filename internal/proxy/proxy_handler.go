@@ -2,11 +2,18 @@ package proxy
 
 import (
 	"context"
+	"github.com/VaynerAkaWalo/go-toolkit/xctx"
 	"io"
 	"log/slog"
 	"mc-proxy/internal/packet"
 	"mc-proxy/internal/routing"
 	"net"
+	"time"
+)
+
+const (
+	Hostname xctx.ContextKey = "hostname"
+	Duration xctx.ContextKey = "duration"
 )
 
 type Handler struct {
@@ -21,6 +28,7 @@ func NewProxyHandler(routingTable *routing.LookupTable) *Handler {
 
 func (h *Handler) Handle(ctx context.Context, cc net.Conn) {
 	defer cc.Close()
+	startTime := time.Now()
 
 	handshake, bytesToReply, err := packet.ReadHandshake(cc)
 	if err != nil {
@@ -28,7 +36,7 @@ func (h *Handler) Handle(ctx context.Context, cc net.Conn) {
 		return
 	}
 
-	ctx = context.WithValue(ctx, "server_hostname", handshake.Hostname)
+	ctx = context.WithValue(ctx, Hostname, handshake.Hostname)
 
 	found, serverAddress := h.routingTable.AddressLookup(handshake.Hostname)
 	if !found {
@@ -53,6 +61,9 @@ func (h *Handler) Handle(ctx context.Context, cc net.Conn) {
 
 	<-ch
 	<-ch
+
+	connectionTime := time.Since(startTime).Milliseconds()
+	ctx = context.WithValue(ctx, Duration, connectionTime)
 
 	slog.InfoContext(ctx, "Connection closed")
 }

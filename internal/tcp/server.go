@@ -2,9 +2,14 @@ package tcp
 
 import (
 	"context"
+	"github.com/VaynerAkaWalo/go-toolkit/xctx"
 	"github.com/google/uuid"
 	"log/slog"
 	"net"
+)
+
+const (
+	ClientIp xctx.ContextKey = "client_ip"
 )
 
 type Server struct {
@@ -33,8 +38,8 @@ func (s *Server) ListenAndServe() error {
 			continue
 		}
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, "client_ip", cc.RemoteAddr().String())
-		ctx = context.WithValue(ctx, "connection_id", uuid.New().String())
+		ctx = context.WithValue(ctx, ClientIp, cc.RemoteAddr().String())
+		ctx = context.WithValue(ctx, xctx.Transaction, uuid.New().String())
 
 		go s.handler(ctx, cc)
 	}
