@@ -16,6 +16,8 @@ const (
 	Duration xctx.ContextKey = "duration"
 )
 
+const handshakeTimeout = 5 * time.Second
+
 type Handler struct {
 	routingTable *routing.LookupTable
 }
@@ -30,11 +32,13 @@ func (h *Handler) Handle(ctx context.Context, cc net.Conn) {
 	defer cc.Close()
 	startTime := time.Now()
 
+	cc.SetReadDeadline(startTime.Add(handshakeTimeout))
 	handshake, bytesToReply, err := packet.ReadHandshake(cc)
 	if err != nil {
 		slog.ErrorContext(ctx, "Error while processing handshake packet "+err.Error())
 		return
 	}
+	cc.SetReadDeadline(time.Time{})
 
 	ctx = context.WithValue(ctx, Hostname, handshake.Hostname)
 

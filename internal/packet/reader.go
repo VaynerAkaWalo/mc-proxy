@@ -2,6 +2,7 @@ package packet
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
 	"log"
 )
@@ -49,8 +50,12 @@ func ReadString(r io.Reader) (string, error) {
 		return "", err
 	}
 
+	if length < 0 || length > maxHandshakeLength {
+		return "", fmt.Errorf("invalid string length %d", length)
+	}
+
 	buffer := make([]byte, length)
-	_, err = r.Read(buffer)
+	_, err = io.ReadFull(r, buffer)
 	if err != nil {
 		log.Println("Error while reading string", err.Error())
 		return "", err

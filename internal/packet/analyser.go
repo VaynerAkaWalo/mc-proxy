@@ -3,9 +3,13 @@ package packet
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 )
+
+// A handshake carries a varint id, a varint protocol, a hostname of at most 255 characters and a port.
+const maxHandshakeLength = 1024
 
 func ReadHandshake(r io.Reader) (Handshake, []byte, error) {
 	var bytesToReply []byte
@@ -16,8 +20,12 @@ func ReadHandshake(r io.Reader) (Handshake, []byte, error) {
 		return Handshake{}, nil, err
 	}
 
+	if length <= 0 || length > maxHandshakeLength {
+		return Handshake{}, nil, fmt.Errorf("invalid handshake length %d", length)
+	}
+
 	packet := make([]byte, length)
-	_, err = r.Read(packet)
+	_, err = io.ReadFull(r, packet)
 	if err != nil {
 		log.Println("Error while reading packet", err.Error())
 		return Handshake{}, nil, err
