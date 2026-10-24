@@ -48,7 +48,7 @@ func (ls *LookupService) updateLookups() {
 }
 
 func lookupHostname(servAddr string) string {
-	return servAddr + ".blamedevs.com"
+	return servAddr + ".mc-server.blamedevs.com"
 }
 
 func serverRoute(serv server.Response) string {

@@ -15,7 +15,7 @@ func main() {
 
 	lookupTable := routing.NewLookupTable()
 	managerClient := routing.ManagerClient{
-		Addr: "https://blamedevs.com",
+		Addr: "http://mc-server-manager.minecraft-server.svc.cluster.local:8080",
 	}
 
 	lookupService := routing.NewLookupService(lookupTable, managerClient)

@@ -40,17 +40,20 @@ spec:
   type: ClusterIP
 
 ---
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: gateway.networking.k8s.io/v1
 kind: TCPRoute
 metadata:
   name: mc-proxy
   namespace: minecraft-server
+  annotations:
+    external-dns.kubernetes.io/hostname: "*.mc-server.blamedevs.com"
+    external-dns.kubernetes.io/cloudflare-proxied: "false"
 spec:
   parentRefs:
-    - name: envoy-gateway
+    - name: eg
       sectionName: mc-tcp
       kind: Gateway
-      namespace: infra
+      namespace: envoy-gateway-system
 
   rules:
     - backendRefs:
