@@ -45,12 +45,15 @@ kind: TCPRoute
 metadata:
   name: mc-proxy
   namespace: minecraft-server
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "*.mc-server.blamedevs.com"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
   parentRefs:
-    - name: envoy-gateway
+    - name: eg
       sectionName: mc-tcp
       kind: Gateway
-      namespace: infra
+      namespace: envoy-gateway-system
 
   rules:
     - backendRefs:

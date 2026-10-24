@@ -11,7 +11,7 @@ type ManagerClient struct {
 }
 
 func (c *ManagerClient) ListServers() ([]server.Response, error) {
-	resp, err := http.Get(c.Addr + "/mc-server-manager/servers")
+	resp, err := http.Get(c.Addr + "/servers")
 	if err != nil {
 		return nil, err
 	}
