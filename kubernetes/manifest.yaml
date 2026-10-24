@@ -46,8 +46,8 @@ metadata:
   name: mc-proxy
   namespace: minecraft-server
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "*.mc-server.blamedevs.com"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.kubernetes.io/hostname: "*.mc-server.blamedevs.com"
+    external-dns.kubernetes.io/cloudflare-proxied: "false"
 spec:
   parentRefs:
     - name: eg
