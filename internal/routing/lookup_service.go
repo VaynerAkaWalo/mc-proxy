@@ -33,7 +33,7 @@ func (ls *LookupService) StartLookupService() {
 func (ls *LookupService) updateLookups() {
 	servers, err := ls.managerClient.ListServers()
 	if err != nil {
-		slog.Error("Failed to get server from manager")
+		slog.Error("Failed to get server from manager", "error", err)
 		return
 	}
 
